@@ -105,17 +105,17 @@ static char tb_classify(const int sc[2], const int *c, int k, double ratio_thres
 	char type;
 	if (sc[0] == 0 && sc[1] == 0) {
 		if (c[0<<2|2] == c[2<<2|0]) type = '0';
-		else if (c[0<<2|2] >= k - 4 + c[2<<2|0] && (c[2<<2|0] <= 1 || c[0<<2|2] * 0.05 > c[2<<2|0])) type = 'p';
-		else if (c[2<<2|0] >= k - 4 + c[0<<2|2] && (c[0<<2|2] <= 1 || c[2<<2|0] * 0.05 > c[0<<2|2])) type = 'm';
+		else if (c[0<<2|2] >= k - 4 + c[2<<2|0] && (c[2<<2|0] <= 1 || c[0<<2|2] * 0.05 > c[2<<2|0])) type = '1';
+		else if (c[2<<2|0] >= k - 4 + c[0<<2|2] && (c[0<<2|2] <= 1 || c[2<<2|0] * 0.05 > c[0<<2|2])) type = '2';
 		else type = '0';
 	} else if (sc[0] > k && sc[1] > k) {
-		type = 'a';
+		type = '0';
 	} else if (sc[0] >= k - 4 + sc[1] && sc[0] * 0.05 >= sc[1] && c[0<<2|2] * ratio_thres > c[2<<2|0]) {
-		type = 'p';
+		type = '1';
 	} else if (sc[1] >= k - 4 + sc[0] && sc[1] * 0.05 >= sc[0] && c[2<<2|0] * ratio_thres > c[0<<2|2]) {
-		type = 'm';
+		type = '2';
 	} else {
-		type = 'a';
+		type = '0';
 	}
 	return type;
 }
@@ -141,8 +141,7 @@ static void *tb_pipeline(void *shared, int step, void *_data)
 			int *c = s->cnt[i].c;
 			char type;
 			type = tb_classify(s->cnt[i].sc, c, aux->k, aux->ratio_thres);
-			printf("%s\t%c\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", s->seq[i].name, type, s->cnt[i].sc[0], s->cnt[i].sc[1],
-				   c[0<<2|2], c[2<<2|0], c[0<<2|1], c[1<<2|0], s->cnt[i].nk, c[0]);
+			printf("%s\t%c\n", s->seq[i].name, type);
 			free(s->seq[i].name); free(s->seq[i].seq); free(s->seq[i].qual); free(s->seq[i].comment);
 		}
 		free(s->seq); free(s->cnt); free(s);
